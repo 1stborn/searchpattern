@@ -42,13 +42,14 @@ func (r *radixTree) add(search string, v interface{}) {
 
 	c := search[0]
 
-	if v, ok := r.leafs[c]; ok {
-		v.add(search[1:], v)
+	if l, ok := r.leafs[c]; ok {
+		l.add(search[1:], v)
 	} else {
 		rt := new(radixTree)
 		rt.add(search[1:], v)
 		r.leafs[c] = rt
 	}
+
 	r.leafs[c] = r.leafs[c]
 }
 
@@ -63,8 +64,12 @@ func (r *radixTree) Find(search string) interface{} {
 }
 
 func (r *radixTree) find(search string) (found []interface{}) {
-	 if r.leafs == nil {
-		found = append(found, r.value)
+	if len(search) == 0 {
+		if r.leafs == nil {
+			return append(found, r.value)
+		} else {
+			return
+		}
 	}
 
 	if !r.caseSensitive {
