@@ -53,7 +53,9 @@ func (r *radixTree) add(search string, v interface{}) {
 }
 
 func (r *radixTree) Find(search string) interface{} {
-	if f := r.find(search); len(f) > 0 {
+	if len(search) == 0 {
+		return nil
+	} else if f := r.find(search); len(f) > 0 {
 		return f[0]
 	}
 
@@ -61,9 +63,7 @@ func (r *radixTree) Find(search string) interface{} {
 }
 
 func (r *radixTree) find(search string) (found []interface{}) {
-	if len(search) == 0 {
-		return
-	} else if r.leafs == nil {
+	 if r.leafs == nil {
 		found = append(found, r.value)
 	}
 
