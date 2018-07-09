@@ -2,28 +2,28 @@ package searchpattern
 
 import "strings"
 
-type radixTree struct {
+type RadixTree struct {
 	leafs         radix
 	caseSensitive bool
 	value         interface{}
 }
 
-type radix map[uint8]*radixTree
+type radix map[uint8]*RadixTree
 
 const (
 	skipOne      = '?'
 	skipInfinite = '*'
 )
 
-func CaseSensitive() *radixTree {
-	return &radixTree{caseSensitive: true}
+func CaseSensitive() *RadixTree {
+	return &RadixTree{caseSensitive: true}
 }
 
-func CaseInsensitive() *radixTree {
-	return new(radixTree)
+func CaseInsensitive() *RadixTree {
+	return new(RadixTree)
 }
 
-func (r *radixTree) Add(pattern string, v interface{}) {
+func (r *RadixTree) Add(pattern string, v interface{}) {
 	if r.caseSensitive {
 		r.add(pattern, v)
 	} else {
@@ -31,7 +31,7 @@ func (r *radixTree) Add(pattern string, v interface{}) {
 	}
 }
 
-func (r *radixTree) add(search string, v interface{}) {
+func (r *RadixTree) add(search string, v interface{}) {
 	if search == "*" || search == "" {
 		r.value = v
 
@@ -45,7 +45,7 @@ func (r *radixTree) add(search string, v interface{}) {
 	if l, ok := r.leafs[c]; ok {
 		l.add(search[1:], v)
 	} else {
-		rt := new(radixTree)
+		rt := new(RadixTree)
 		rt.add(search[1:], v)
 		r.leafs[c] = rt
 	}
@@ -53,7 +53,7 @@ func (r *radixTree) add(search string, v interface{}) {
 	r.leafs[c] = r.leafs[c]
 }
 
-func (r *radixTree) Find(search string) interface{} {
+func (r *RadixTree) Find(search string) interface{} {
 	if len(search) == 0 {
 		return nil
 	} else if f := r.find(search); len(f) > 0 {
@@ -63,7 +63,7 @@ func (r *radixTree) Find(search string) interface{} {
 	return nil
 }
 
-func (r *radixTree) find(search string) (found []interface{}) {
+func (r *RadixTree) find(search string) (found []interface{}) {
 	if len(search) == 0 {
 		if r.leafs == nil {
 			return append(found, r.value)
